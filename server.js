@@ -10,9 +10,7 @@ const morgan = require('morgan')
 
 
 
-
-
-
+const pokemonRouter = require('./routes/pokemons')
 
 
 
@@ -35,13 +33,7 @@ const morgan = require('morgan')
  *                                        APP CONFIG
  **************************************************************************************/
 const { PORT } = process.env
-
-
 const app = express()
-
-
-
-
 
 
 
@@ -102,15 +94,10 @@ app.use(morgan('dev'))
 
 
 
-
-
-
 /***************************************************************************************
  *                                        ROUTER MIDDELWARE
  **************************************************************************************/
-
-
-
+app.use('/api', pokemonRouter)
 
 
 
