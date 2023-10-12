@@ -4,8 +4,8 @@ const router = express.Router()
 const pokemonCtrl = require('../controllers/pokemons')
 
 
-router.get('/pokemon', pokemonCtrl.getRan)
-
+router.post('/pokemon', pokemonCtrl.getRan)
+router.put('/catch', pokemonCtrl.catch)
 
 
 module.exports = router

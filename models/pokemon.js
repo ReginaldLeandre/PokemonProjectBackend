@@ -11,10 +11,13 @@ const pokemonSchema = new Schema({
     pokeDexId: {
         type: Number
     },
-    sprites: {
-        type: Object
-        //back_default
+    front: {
+        type: String
         //front_default
+    },
+    back: {
+        type: String
+        //back_default
     },
     stats: {
         type: [Object]
@@ -22,7 +25,7 @@ const pokemonSchema = new Schema({
         //stat
             //name
     },
-    types: {
+    type: {
         type: [String],
         //type
             //name
@@ -31,6 +34,10 @@ const pokemonSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null
+    },
+    caught: {
+        type: Boolean,
+        default: false
     }
 
 },{
