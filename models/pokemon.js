@@ -19,6 +19,9 @@ const pokemonSchema = new Schema({
         type: String
         //back_default
     },
+    dreamWorld: {
+        type: String
+    },
     stats: {
         type: [Object]
         //base_stat
@@ -38,9 +41,14 @@ const pokemonSchema = new Schema({
     caught: {
         type: Boolean,
         default: false
+    },
+    pokeBall: {
+        type: String,
+        default: null
     }
 
-},{
+},
+{
     timestamps: true
 })
 
