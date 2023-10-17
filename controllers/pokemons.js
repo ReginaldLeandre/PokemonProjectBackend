@@ -21,7 +21,7 @@ const geRandomPokemon = async (req, res) => {
         const pokemonArray = []
 
         for(let i = 0; i < 10; i++) {
-            const hoennRegion = getRandomNumber(1, 386)
+            const hoennRegion = getRandomNumber(1, 905)
             const response = await axios.get(`${BASE_URL}pokemon/${hoennRegion}`)
             const responseData = response.data
 
