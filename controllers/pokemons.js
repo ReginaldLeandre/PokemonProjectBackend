@@ -26,7 +26,6 @@ const geRandomPokemon = async (req, res) => {
             const responseData = response.data
 
 
-
             const pokemon = {
                 name: responseData.name,
                 pokeDexId: responseData.id,
@@ -56,46 +55,95 @@ const geRandomPokemon = async (req, res) => {
 }
 
 
+const showPokemon = async (req, res) => {
+    try{
+    const id = req.params.id
+    const response = await axios.get(`${BASE_URL}pokemon/${id}`)
+    const responseData = response.data
 
-const catchPokemon = async (req, res) => {
-    try {
-        const pokemonName = req.body.name; 
-        //console.log(pokemonName)
+    const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${id}`)
+    const secondResponseData = secondResponse.data
+    let englishFlavorText = null
 
-        const foundPokemon = await PokeMon.findOne({ name: pokemonName });
-
-        if (!foundPokemon) {
-            return res.status(404).json({ error: `Pokemon ${pokemonName} not found.` });
-        }
-
-        if (foundPokemon.caught) {
-            return res.status(200).json(`You already caught ${foundPokemon.name}`);
-        }
-
-        const catching = getRandomNumber(1, 100);
-
-        if (catching <= 50) {
-            return res.status(200).json(`${foundPokemon.name} broke free!!`);
-        } else if (catching <= 85) {
-            return res.status(200).json('Darn! Almost caught!');
-        } else {
-            foundPokemon.caught = true;
-            await foundPokemon.save();
-            return res.status(200).json(`${foundPokemon.name} has been caught!`);
-        }
-    } catch (error) {
-        return res.status(400).json({ error: error.message });
+    for (const entry of secondResponseData.flavor_text_entries) {
+      if (entry.language.name === 'en') {
+        englishFlavorText = entry.flavor_text;
+        break  
+      }
     }
+
+
+    const pokemon = {
+        name: responseData.name,
+        pokeDexId: responseData.id,
+        description: englishFlavorText,
+        front: responseData.sprites.front_default,
+        back: responseData.sprites.back_default,
+        dreamWorld: responseData.sprites.other.dream_world.front_default,
+        type: responseData.types.map(typeData => typeData.type.name),
+        stats: responseData.stats.map(statsData => ({
+            statName: statsData.stat.name, 
+            statData: statsData.base_stat
+            })),
+
+    }
+    res.status(200).json(pokemon)
+    }
+    catch(error){
+        console.log(error)
+        res.status(400).json({error: error.message})
+    }   
 }
-
-
 
 
 
 
 module.exports = {
     getRan: geRandomPokemon,
-    catch: catchPokemon,
+    show: showPokemon
+    // catch: catchPokemon,
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// const catchPokemon = async (req, res) => {
+//     try {
+//         const pokemonName = req.body.name; 
+//         //console.log(pokemonName)
+
+//         const foundPokemon = await PokeMon.findOne({ name: pokemonName });
+
+//         if (!foundPokemon) {
+//             return res.status(404).json({ error: `Pokemon ${pokemonName} not found.` });
+//         }
+
+//         if (foundPokemon.caught) {
+//             return res.status(200).json(`You already caught ${foundPokemon.name}`);
+//         }
+
+//         const catching = getRandomNumber(1, 100);
+
+//         if (catching <= 50) {
+//             return res.status(200).json(`${foundPokemon.name} broke free!!`);
+//         } else if (catching <= 85) {
+//             return res.status(200).json('Darn! Almost caught!');
+//         } else {
+//             foundPokemon.caught = true;
+//             await foundPokemon.save();
+//             return res.status(200).json(`${foundPokemon.name} has been caught!`);
+//         }
+//     } catch (error) {
+//         return res.status(400).json({ error: error.message });
+//     }
+// }

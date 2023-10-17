@@ -11,6 +11,9 @@ const pokemonSchema = new Schema({
     pokeDexId: {
         type: Number
     },
+    description: {
+        type: String
+    },
     front: {
         type: String
         //front_default
