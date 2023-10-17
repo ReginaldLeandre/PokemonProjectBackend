@@ -21,8 +21,8 @@ const geRandomPokemon = async (req, res) => {
         const pokemonArray = []
 
         for(let i = 0; i < 10; i++) {
-            const hoennRegion = getRandomNumber(1, 905)
-            const response = await axios.get(`${BASE_URL}pokemon/${hoennRegion}`)
+            const allRegions = getRandomNumber(1, 905)
+            const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
             const responseData = response.data
 
 
@@ -96,6 +96,44 @@ const showPokemon = async (req, res) => {
 }
 
 
+const catchPokemon = async (req, res) => {
+    const allRegions = getRandomNumber(1, 905)
+    const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
+    const responseData = response.data
+
+    const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${allRegions}`)
+    const secondResponseData = secondResponse.data
+
+    let englishFlavorText = null
+
+    for (const entry of secondResponseData.flavor_text_entries) {
+      if (entry.language.name === 'en') {
+        englishFlavorText = entry.flavor_text;
+        break  
+      }
+    }
+
+    const pokemon = {
+        name: responseData.name,
+        pokeDexId: responseData.id,
+        description: englishFlavorText,
+        front: responseData.sprites.front_default,
+        back: responseData.sprites.back_default,
+        dreamWorld: responseData.sprites.other.dream_world.front_default,
+        type: responseData.types.map(typeData => typeData.type.name),
+        stats: responseData.stats.map(statsData => ({
+            statName: statsData.stat.name, 
+            statData: statsData.base_stat
+            })),
+
+    }
+
+
+
+
+
+
+}
 
 
 module.exports = {
