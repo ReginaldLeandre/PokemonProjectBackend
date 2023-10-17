@@ -11,6 +11,9 @@ const pokemonSchema = new Schema({
     pokeDexId: {
         type: Number
     },
+    description: {
+        type: String
+    },
     front: {
         type: String
         //front_default
@@ -18,6 +21,9 @@ const pokemonSchema = new Schema({
     back: {
         type: String
         //back_default
+    },
+    dreamWorld: {
+        type: String
     },
     stats: {
         type: [Object]
@@ -38,9 +44,14 @@ const pokemonSchema = new Schema({
     caught: {
         type: Boolean,
         default: false
+    },
+    pokeBall: {
+        type: String,
+        default: null
     }
 
-},{
+},
+{
     timestamps: true
 })
 
