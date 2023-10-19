@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 
 
 const pokemonSchema = new Schema({
-    name: {
+    pokemonName: {
         type: String,
     },
     pokeDexId: {
@@ -42,8 +42,7 @@ const pokemonSchema = new Schema({
         default: null
     },
     caught: {
-        type: Boolean,
-        default: false
+        type: Date
     },
     pokeBall: {
         type: String,
