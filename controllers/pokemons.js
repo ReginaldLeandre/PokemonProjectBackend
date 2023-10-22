@@ -209,13 +209,37 @@ const catchPokemon = async (req, res) => {
     }
 
 
+// const searchPokemon = async (req, res) => {
+
+
+//     try {
+//         const searchQuery = req.body.name 
+//         const lowercaseSearch = searchQuery.toLowerCase()
+//         const response = await axios.get(`${BASE_URL}pokemon/${lowercaseSearch}`)
+//         const responseData = response.data
+
+//         const pokemon = {
+//             pokemonName: responseData.name,
+//             pokeDexId: responseData.id,
+//             front: responseData.sprites.front_default,
+//             back: responseData.sprites.back_default,
+//             dreamWorld: responseData.sprites.other.dream_world.front_default,
+//         }
+//         res.status(200).json(pokemon)
+//     }
+//     catch(error){
+//         console.log(error)
+//         res.status(400).json({error: error.message})
+//     }  
+// }    
 
 
 module.exports = {
     getRan: geRandomPokemon,
     show: showPokemon,
     encounter: encounterPokemon,
-    catch: catchPokemon
+    catch: catchPokemon,
+    // search: searchPokemon
 }
 
 
