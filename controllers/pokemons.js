@@ -33,6 +33,7 @@ const geRandomPokemon = async (req, res) => {
                 front: responseData.sprites.front_default,
                 back: responseData.sprites.back_default,
                 dreamWorld: responseData.sprites.other.dream_world.front_default,
+                home: responseData.sprites.other.home.front_default,
             }
             pokemonArray.push(pokemon)
         }
@@ -75,6 +76,7 @@ const showPokemon = async (req, res) => {
         front: responseData.sprites.front_default,
         back: responseData.sprites.back_default,
         dreamWorld: responseData.sprites.other.dream_world.front_default,
+        home: responseData.sprites.other.home.front_default,
         type: responseData.types.map(typeData => typeData.type.name),
         stats: responseData.stats.map(statsData => ({
             statName: statsData.stat.name, 
@@ -118,6 +120,7 @@ const encounterPokemon = async (req, res) => {
         front: responseData.sprites.front_default,
         back: responseData.sprites.back_default,
         dreamWorld: responseData.sprites.other.dream_world.front_default,
+        home: responseData.sprites.other.home.front_default,
     }
 
 
@@ -189,6 +192,7 @@ const catchPokemon = async (req, res) => {
                     front: responseData.sprites.front_default,
                     back: responseData.sprites.back_default,
                     dreamWorld: responseData.sprites.other.dream_world.front_default,
+                    home: responseData.sprites.other.home.front_default,
                     type: responseData.types.map(typeData => typeData.type.name),
                     stats: responseData.stats.map(statsData => ({
                         statName: statsData.stat.name, 
@@ -210,12 +214,15 @@ const catchPokemon = async (req, res) => {
 
 
 // const searchPokemon = async (req, res) => {
-
+    
 
 //     try {
-//         const searchQuery = req.body.name 
-//         const lowercaseSearch = searchQuery.toLowerCase()
-//         const response = await axios.get(`${BASE_URL}pokemon/${lowercaseSearch}`)
+//         const { name } = req.query
+//         console.log("this is the query name: ",name)
+//         // const lowercaseSearch = name.toLowerCase()
+//         // console.log("this is the query lowercaseSearch: ",lowercaseSearch)
+//         const response = await axios.get(`${BASE_URL}pokemon/${name}`)
+//         console.log("this is the query response: ", response)
 //         const responseData = response.data
 
 //         const pokemon = {
