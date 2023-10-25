@@ -200,6 +200,20 @@ const catchPokemon = async (req, res) => {
                       break  
                     }
                   }
+
+                  const ability = await Promise.all(
+                    responseData.abilities.map(async (abilityData) => {
+                        const abilityResponse = await axios.get(abilityData.ability.url)
+                        const abilityName = abilityData.ability.name
+                        const abilityDescription = abilityResponse.data.effect_entries.find(
+                            (entry) => entry.language.name === 'en'
+                        )
+                        return {
+                            name: abilityName,
+                            description: abilityDescription ? abilityDescription.effect : 'No description available',
+                        }
+                    })
+                )
                   const pokemon = {
                     pokemonName: responseData.name,
                     pokeDexId: responseData.id,
@@ -208,6 +222,7 @@ const catchPokemon = async (req, res) => {
                     back: responseData.sprites.back_default,
                     dreamWorld: responseData.sprites.other.dream_world.front_default,
                     home: responseData.sprites.other.home.front_default,
+                    abilities: ability,
                     type: responseData.types.map(typeData => typeData.type.name),
                     stats: responseData.stats.map(statsData => ({
                         statName: statsData.stat.name, 
