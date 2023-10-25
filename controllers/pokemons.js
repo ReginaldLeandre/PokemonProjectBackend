@@ -9,9 +9,9 @@ const BASE_URL = process.env.BASE_URL
 
 
 function getRandomNumber(min, max) {
-    min = Math.ceil(min); 
-    max = Math.floor(max); 
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    min = Math.ceil(min) 
+    max = Math.floor(max) 
+    return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
 const geRandomPokemon = async (req, res) => {
@@ -25,7 +25,7 @@ const geRandomPokemon = async (req, res) => {
             const allRegions = getRandomNumber(1, 905)
             const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
             const responseData = response.data
-
+            
 
             const pokemon = {
                 pokemonName: responseData.name,
@@ -37,7 +37,7 @@ const geRandomPokemon = async (req, res) => {
             }
             pokemonArray.push(pokemon)
         }
-
+    
 
         
 
@@ -61,12 +61,26 @@ const showPokemon = async (req, res) => {
     const secondResponseData = secondResponse.data
     let englishFlavorText = null
 
+
     for (const entry of secondResponseData.flavor_text_entries) {
       if (entry.language.name === 'en') {
-        englishFlavorText = entry.flavor_text;
+        englishFlavorText = entry.flavor_text
         break  
       }
     }
+    const ability = await Promise.all(
+        responseData.abilities.map(async (abilityData) => {
+            const abilityResponse = await axios.get(abilityData.ability.url)
+            const abilityName = abilityData.ability.name
+            const abilityDescription = abilityResponse.data.effect_entries.find(
+                (entry) => entry.language.name === 'en'
+            )
+            return {
+                name: abilityName,
+                description: abilityDescription ? abilityDescription.effect : 'No description available',
+            }
+        })
+    )
 
 
     const pokemon = {
@@ -77,6 +91,7 @@ const showPokemon = async (req, res) => {
         back: responseData.sprites.back_default,
         dreamWorld: responseData.sprites.other.dream_world.front_default,
         home: responseData.sprites.other.home.front_default,
+        abilities: ability,
         type: responseData.types.map(typeData => typeData.type.name),
         stats: responseData.stats.map(statsData => ({
             statName: statsData.stat.name, 
@@ -108,7 +123,7 @@ const encounterPokemon = async (req, res) => {
 
     for (const entry of secondResponseData.flavor_text_entries) {
       if (entry.language.name === 'en') {
-        englishFlavorText = entry.flavor_text;
+        englishFlavorText = entry.flavor_text
         break  
       }
     }
@@ -135,7 +150,7 @@ catch(error){
 
 const catchPokemon = async (req, res) => {
        try {
-        let dateObj = new Date();
+        let dateObj = new Date()
         let month = dateObj.getUTCMonth() + 1 
         let day = dateObj.getUTCDate()
         let year = dateObj.getUTCFullYear()
@@ -148,16 +163,16 @@ const catchPokemon = async (req, res) => {
         let catchRateModifier = 1
         switch (ballType) {
             case 'PokeBall': 
-                catchRateModifier = 1; //base chance
+                catchRateModifier = 1 //base chance
                 break
             case 'GreatBall':
-                catchRateModifier = 1.5;  // 50% higher chance
+                catchRateModifier = 1.5  // 50% higher chance
                 break
             case 'UltraBall':
-                catchRateModifier = 2;  // 2x catch rate
+                catchRateModifier = 2  // 2x catch rate
                 break
             case 'MasterBall':
-                catchRateModifier = Infinity;  // Always catch
+                catchRateModifier = Infinity  // Always catch
                 break
             default:
                 break
@@ -166,7 +181,7 @@ const catchPokemon = async (req, res) => {
             const catching = getRandomNumber(1, 100)
     
             if (catching <= 50 * catchRateModifier) {
-                return res.status(200).json(`${pokeName} broke free!!`);
+                return res.status(200).json(`${pokeName} broke free!!`)
             } else if (catching <= 85 * catchRateModifier) {
                 return res.status(200).json('Darn! Almost caught!')
             } 
@@ -181,7 +196,7 @@ const catchPokemon = async (req, res) => {
                 
                 for (const entry of secondResponseData.flavor_text_entries) {
                     if (entry.language.name === 'en') {
-                      englishFlavorText = entry.flavor_text;
+                      englishFlavorText = entry.flavor_text
                       break  
                     }
                   }
@@ -208,7 +223,7 @@ const catchPokemon = async (req, res) => {
                 return res.status(200).json(`Gotcha! ${pokeName} has been caught! `)
             }
         } catch (error) {
-            return res.status(400).json({ error: error.message });
+            return res.status(400).json({ error: error.message })
         }
     }
 
