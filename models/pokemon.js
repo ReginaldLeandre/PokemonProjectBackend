@@ -25,6 +25,12 @@ const pokemonSchema = new Schema({
     dreamWorld: {
         type: String
     },
+    home: {
+        type: String
+    },
+    abilities: {
+        type: [Object]
+    },
     stats: {
         type: [Object]
         //base_stat
