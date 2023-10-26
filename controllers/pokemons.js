@@ -30,9 +30,6 @@ const geRandomPokemon = async (req, res) => {
             const pokemon = {
                 pokemonName: responseData.name,
                 pokeDexId: responseData.id,
-                front: responseData.sprites.front_default,
-                back: responseData.sprites.back_default,
-                dreamWorld: responseData.sprites.other.dream_world.front_default,
                 home: responseData.sprites.other.home.front_default,
             }
             pokemonArray.push(pokemon)
@@ -72,12 +69,12 @@ const showPokemon = async (req, res) => {
         responseData.abilities.map(async (abilityData) => {
             const abilityResponse = await axios.get(abilityData.ability.url)
             const abilityName = abilityData.ability.name
-            const abilityDescription = abilityResponse.data.effect_entries.find(
+            const abilityDescription = abilityResponse.data.flavor_text_entries.find(
                 (entry) => entry.language.name === 'en'
             )
             return {
                 name: abilityName,
-                description: abilityDescription ? abilityDescription.effect : 'This ability has no description available',
+                description: abilityDescription ? abilityDescription.flavor_text : 'This ability has no description available',
             }
         })
     )
