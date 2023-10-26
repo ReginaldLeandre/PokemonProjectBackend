@@ -77,7 +77,7 @@ const showPokemon = async (req, res) => {
             )
             return {
                 name: abilityName,
-                description: abilityDescription ? abilityDescription.effect : 'No description available',
+                description: abilityDescription ? abilityDescription.effect : 'This ability has no description available',
             }
         })
     )
