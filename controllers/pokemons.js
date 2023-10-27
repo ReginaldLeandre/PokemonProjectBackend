@@ -93,7 +93,7 @@ const showPokemon = async (req, res) => {
         })
     )
 
-
+    
     const pokemon = {
         pokemonName: responseData.name,
         pokeDexId: responseData.id,
