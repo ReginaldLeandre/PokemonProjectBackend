@@ -87,8 +87,8 @@ const showPokemon = async (req, res) => {
                 (entry) => entry.language.name === 'en'
             )
             return {
-                name: abilityName,
-                description: abilityDescription ? abilityDescription.flavor_text : 'This ability has no description available',
+                abilityName: abilityName,
+                abilityDescription: abilityDescription ? abilityDescription.flavor_text : 'This ability has no description available',
             }
         })
     )
