@@ -12,7 +12,7 @@ const bodyParser = require('body-parser')
 
 const pokemonRouter = require('./routes/pokemons')
 const cartRouter = require('./routes/carts')
-
+const authRouter = require('./routes/auth-router')
 
 
 
@@ -99,7 +99,7 @@ app.use(bodyParser.json());
  **************************************************************************************/
 app.use('/api', pokemonRouter)
 app.use('/cart', cartRouter)
-
+app.use('/auth', authRouter)
 
 
 
