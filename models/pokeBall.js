@@ -8,7 +8,14 @@ const pokeBallSchema = new Schema({
         type: String,
         enum: ["Poke Ball", "Great Ball", "Ultra Ball", "Master Ball"],
         default: "Poke Ball"
-    } 
+    },
+    quantity: {
+      type: Number,
+      default: 0,
+    },
+},
+{
+    timestamps: true
 })
 
 

@@ -13,13 +13,18 @@ const userSchema = new Schema(
       required: true,
     },
     pokeballs: {
-        type: [Object],
-        default: null
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "PokeBall",
+        default: []
     },
     pokemon: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "PokeMon",
-        default: null
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "PokeMon",
+      default: [],
+    },
+    purchasedAMasterBall: {
+      type: Boolean,
+      default: false
     }
   },
   {

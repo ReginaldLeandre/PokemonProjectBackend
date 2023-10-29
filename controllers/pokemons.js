@@ -4,6 +4,8 @@
 const axios = require('axios')
 const { PokeMon } = require('../models')
 const { User } = require('../models')
+const { handleValidateOwnership } = require("../middleware/auth-middleware")
+
 const BASE_URL = process.env.BASE_URL
 
 

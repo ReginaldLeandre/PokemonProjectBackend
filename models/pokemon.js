@@ -18,13 +18,6 @@ const pokemonSchema = new Schema({
         type: String
         //front_default
     },
-    back: {
-        type: String
-        //back_default
-    },
-    dreamWorld: {
-        type: String
-    },
     home: {
         type: String
     },
@@ -48,10 +41,12 @@ const pokemonSchema = new Schema({
         default: null
     },
     caught: {
-        type: Date
+        type: Date,
+        default: null
     },
     pokeBall: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PokeBall',
         default: null
     }
 
