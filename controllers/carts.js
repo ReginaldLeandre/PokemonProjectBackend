@@ -1,6 +1,7 @@
 const { PokeBall, Cart, PokeMon, User } = require('../models')
 const { calculateTotalPriceOfCart } = require('../utils/cartUtil')
-const axios = require('axios')
+const axios = require('axios')\
+const { handleValidateOwnership } = require("../middleware/auth-middleware");
 const BASE_URL = process.env.BASE_URL
 
 const createCart = async (req, res) => {
@@ -17,6 +18,7 @@ const addPokeToCart = async (req, res) => {
     try {
         const user = req.user
         let price = 0
+        
         const cart = await Cart.findOne({ user: user._id })
         const id = req.params.id
         const response = await axios.get(`${BASE_URL}pokemon/${id}`)
