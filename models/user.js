@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema
+const PokeBall = require('./pokeBall')
 
 const userSchema = new Schema(
   {
@@ -13,9 +14,8 @@ const userSchema = new Schema(
       required: true,
     },
     pokeballs: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "PokeBall",
-        default: []
+      type: [PokeBall.schema], 
+      default: [],
     },
     pokemon: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -40,4 +40,4 @@ const userSchema = new Schema(
   }
 )
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema)

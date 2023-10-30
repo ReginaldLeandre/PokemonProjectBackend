@@ -30,11 +30,18 @@ const cartSchema = new Schema({
       },
     },
   ],
+  totalItems: {
+    type: Number,
+    default: 0
+  },
   totalPrice: {
     type: Number,
     default: 0,
   },
-});
+},
+{
+    timestamps: true
+})
 
 const Cart = mongoose.model("Cart", cartSchema)
 module.exports = Cart

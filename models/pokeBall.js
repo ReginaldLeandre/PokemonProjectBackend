@@ -1,9 +1,14 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 
 
 const pokeBallSchema = new Schema({
+    trainer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     ballType: {
         type: String,
         enum: ["Poke Ball", "Great Ball", "Ultra Ball", "Master Ball"],

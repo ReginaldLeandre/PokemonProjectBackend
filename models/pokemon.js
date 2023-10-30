@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 
@@ -40,9 +40,13 @@ const pokemonSchema = new Schema({
         ref: "User",
         default: null
     },
-    caught: {
+    caughtOrPurchased: {
         type: Date,
         default: null
+    },
+    caught: {
+        type: Boolean,
+        default: false
     },
     pokeBall: {
         type: mongoose.Schema.Types.ObjectId,
@@ -56,5 +60,5 @@ const pokemonSchema = new Schema({
 })
 
 
-const PokeMon = mongoose.model('PokeMon', pokemonSchema);
-module.exports = PokeMon;
+const PokeMon = mongoose.model('PokeMon', pokemonSchema)
+module.exports = PokeMon
