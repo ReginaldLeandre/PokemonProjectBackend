@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 
@@ -17,13 +17,6 @@ const pokemonSchema = new Schema({
     front: {
         type: String
         //front_default
-    },
-    back: {
-        type: String
-        //back_default
-    },
-    dreamWorld: {
-        type: String
     },
     home: {
         type: String
@@ -47,11 +40,17 @@ const pokemonSchema = new Schema({
         ref: "User",
         default: null
     },
+    caughtOrPurchased: {
+        type: Date,
+        default: null
+    },
     caught: {
-        type: Date
+        type: Boolean,
+        default: false
     },
     pokeBall: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PokeBall',
         default: null
     }
 
@@ -61,5 +60,5 @@ const pokemonSchema = new Schema({
 })
 
 
-const PokeMon = mongoose.model('PokeMon', pokemonSchema);
-module.exports = PokeMon;
+const PokeMon = mongoose.model('PokeMon', pokemonSchema)
+module.exports = PokeMon
