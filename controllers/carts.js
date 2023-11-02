@@ -1,6 +1,6 @@
 const { PokeBall, Cart, PokeMon, User } = require('../models')
 const { calculateTotalPriceOfCart } = require('../utils/cartUtil')
-const axios = require('axios')\
+const axios = require('axios')
 const { handleValidateOwnership } = require("../middleware/auth-middleware");
 const BASE_URL = process.env.BASE_URL
 

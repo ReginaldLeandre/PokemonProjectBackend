@@ -49,8 +49,7 @@ const pokemonSchema = new Schema({
         default: false
     },
     pokeBall: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'PokeBall',
+        type: String,
         default: null
     }
 
