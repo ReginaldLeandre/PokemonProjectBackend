@@ -14,7 +14,7 @@ function getRandomNumber(min, max) {
     min = Math.ceil(min) 
     max = Math.floor(max) 
     return Math.floor(Math.random() * (max - min + 1)) + min
-}
+  }
 
 const geRandomPokemon = async (req, res) => {
 
@@ -124,24 +124,23 @@ const showPokemon = async (req, res) => {
 const encounterPokemon = async (req, res) => {
 
     try {
-            const allRegions = getRandomNumber(1, 905)
-            const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
-            const responseData = response.data
+        const allRegions = getRandomNumber(1, 905)
+        const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
+        const responseData = response.data
 
-            const pokemon = {
-                pokemonName: responseData.name,
-                pokeDexId: responseData.id,
-                home: responseData.sprites.other.home.front_default,
-            }
+    const pokemon = {
+        pokemonName: responseData.name,
+        pokeDexId: responseData.id,
+        home: responseData.sprites.other.home.front_default,
+    }
 
     res.status(200).json(pokemon)
 
-    }
-
-    catch(error){
-        console.log(error)
-        res.status(400).json({error: error.message})
-    }   
+}
+catch(error){
+    console.log(error)
+    res.status(400).json({error: error.message})
+}   
 }
 
 const catchPokemon = async (req, res) => {

@@ -25,6 +25,10 @@ const userSchema = new Schema(
     purchasedAMasterBall: {
       type: Boolean,
       default: false
+    },
+    cart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cart"
     }
   },
   {

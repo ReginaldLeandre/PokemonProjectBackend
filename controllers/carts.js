@@ -6,10 +6,24 @@ const BASE_URL = process.env.BASE_URL
 
 const createCart = async (req, res) => {
     try {
-        const user = req.user
-        const cart = await Cart.create({ user: user._id })
-        return res.status(200).json(`Created a Cart for ${user.username}`)
+        const reqUser = req.user
+         
+        
+        const newCart = {
+            user: reqUser._id
+        } 
+
+        const foundCart = await Cart.findOne({user: reqUser._id})
+        if(foundCart) {
+            return res.status(400).json("You can only have one cart.")
+        }
+
+        const cart = await Cart.create(newCart)
+        console.log("This is the Cart: ", cart)
+        console.log("CREATION: Cart has been created!")
+        return res.status(200).json(cart)
     } catch (error) {
+        console.log("NO CREATION: Cart has NOT been created!")
         return res.status(400).json({ error: error.message })
     }
 }
@@ -21,8 +35,21 @@ const addPokeToCart = async (req, res) => {
         
         const cart = await Cart.findOne({ user: user._id })
         const id = req.params.id
+        
+        const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokeDexId === parseInt(id))
+        console.log("This is the found pokemon: ", foundPoke)
+        if(foundPoke){
+            foundPoke.quantity++
+            console.log("This is the found pokemon's quantity: ", foundPoke.quantity)
+            cart.totalItems++
+            console.log("This is the cart's total items: ", cart.totalItems)
+            await cart.save()
+            return res.status(200).json(`Another ${foundPoke.pokemon.pokemonName} has been added to the cart!`)
+        }
+        
         const response = await axios.get(`${BASE_URL}pokemon/${id}`)
 
+       
         const responseData = response.data
 
         const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${id}`)
@@ -111,9 +138,7 @@ const viewCart = async (req, res) => {
  try{
     const user = req.user
     const cart = await Cart.findOne({user: user._id})
-    const totalPriceOfCart = calculateTotalPriceOfCart(cart)
-
-    return res.status(200).json(totalPriceOfCart)
+    return res.status(200).json(cart)
 
  }
    catch(error) {

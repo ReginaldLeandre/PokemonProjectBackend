@@ -10,7 +10,7 @@ const cartSchema = new Schema({
   pokemonItems: [
     {
       pokemon: {
-        type: [Object],
+        type: Object,
       },
       
       quantity: {
