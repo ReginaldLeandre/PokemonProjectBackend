@@ -28,6 +28,53 @@ const createCart = async (req, res) => {
     }
 }
 
+const viewCart = async (req, res) => {
+
+    try{
+       const user = req.user
+       const cart = await Cart.findOne({user: user._id})
+       return res.status(200).json(cart)
+   
+    }
+      catch(error) {
+       return res.status(400).json({ error: error.message })
+    }
+       
+   }
+   
+const decreasePokeItem = async (req, res) => {
+
+    try{
+      const reqUser = req.user
+    const cart = await Cart.findOne({user: reqUser._id})
+    const pokeName = req.body.pokemonName
+    const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokeName)
+    console.log("This is the found pokemon: ", foundPoke)
+    if(foundPoke){
+        if(foundPoke.quantity > 1) {
+            foundPoke.quantity--
+            console.log("This is the found pokemon's quantity: ", foundPoke.quantity)
+            cart.totalItems--
+            console.log("This is the cart's total items: ", cart.totalItems)
+            await cart.save()
+            return res.status(200).json(`The number of ${foundPoke.pokemon.pokemonName}s has been decreased from the cart!`)
+        }
+        else if(foundPoke.quantity === 1) {
+            cart.pokemonItems = cart.pokemonItems.filter(
+                (pokemonObject) => pokemonObject.pokemon.pokemonName !== pokeName
+            )
+            cart.totalItems--
+            await cart.save()
+            return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`)
+        }
+    }
+    }
+    catch(error) {
+        return res.status(400).json({ error: error.message})
+    }
+
+}
+
 const addPokeToCart = async (req, res) => {
     try {
         const user = req.user
@@ -131,20 +178,6 @@ const addPokeBallToCart = async (req, res) => {
     } catch (error) {
         return res.status(400).json({ error: error.message })
     }
-}
-
-const viewCart = async (req, res) => {
-
- try{
-    const user = req.user
-    const cart = await Cart.findOne({user: user._id})
-    return res.status(200).json(cart)
-
- }
-   catch(error) {
-    return res.status(400).json({ error: error.message })
- }
-    
 }
 
 
