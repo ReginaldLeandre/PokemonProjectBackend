@@ -239,32 +239,30 @@ const catchPokemon = async (req, res) => {
     }
 
 
-// const searchPokemon = async (req, res) => {
+const searchPokemon = async (req, res) => {
     
 
-//     try {
-//         const { name } = req.query
-//         console.log("this is the query name: ",name)
-//         // const lowercaseSearch = name.toLowerCase()
-//         // console.log("this is the query lowercaseSearch: ",lowercaseSearch)
-//         const response = await axios.get(`${BASE_URL}pokemon/${name}`)
-//         console.log("this is the query response: ", response)
-//         const responseData = response.data
+    try {
+        const { pokemonName } = req.query
+        console.log("this is the query name: ", pokemonName)
+        const lowercaseSearch = pokemonName.toLowerCase()
+        console.log("this is the query lowercaseSearch: ",lowercaseSearch)
+        const response = await axios.get(`${BASE_URL}pokemon/${ lowercaseSearch }`)
+        console.log("this is the query response: ", response)
+        const responseData = response.data
 
-//         const pokemon = {
-//             pokemonName: responseData.name,
-//             pokeDexId: responseData.id,
-//             front: responseData.sprites.front_default,
-//             back: responseData.sprites.back_default,
-//             dreamWorld: responseData.sprites.other.dream_world.front_default,
-//         }
-//         res.status(200).json(pokemon)
-//     }
-//     catch(error){
-//         console.log(error)
-//         res.status(400).json({error: error.message})
-//     }  
-// }    
+        const pokemon = {
+            pokemonName: responseData.name,
+            pokeDexId: responseData.id,
+            home: responseData.sprites.other.home.front_default,
+        }
+        res.status(200).json(pokemon)
+    }
+    catch(error){
+        console.log(error)
+        res.status(400).json({error: error.message})
+    }  
+}    
 
 
 module.exports = {
@@ -272,7 +270,7 @@ module.exports = {
     show: showPokemon,
     encounter: encounterPokemon,
     catch: catchPokemon,
-    // search: searchPokemon
+    search: searchPokemon
 }
 
 
