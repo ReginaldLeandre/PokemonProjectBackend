@@ -12,17 +12,18 @@ const cartSchema = new Schema({
       pokemon: {
         type: Object,
       },
-      
       quantity: {
         type: Number,
         default: 0,
       },
+      
+      
     },
   ],
   pokeBallItems: [
     {
       pokeBall: {
-        type: [Object]
+        type: Object
       },
       quantity: {
         type: Number,

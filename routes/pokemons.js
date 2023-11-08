@@ -9,6 +9,6 @@ router.get('/pokemon', pokemonCtrl.getRan)
 router.post('/catch', pokemonCtrl.catch)
 router.get('/:id', pokemonCtrl.show)
 router.get('/pokemon/encounter', pokemonCtrl.encounter)
-// router.get('/search', pokemonCtrl.search)
+router.get('/pokemon/search', pokemonCtrl.search)
 
 module.exports = router
