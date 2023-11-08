@@ -248,7 +248,6 @@ const searchPokemon = async (req, res) => {
         const lowercaseSearch = pokemonName.toLowerCase()
         console.log("this is the query lowercaseSearch: ",lowercaseSearch)
         const response = await axios.get(`${BASE_URL}pokemon/${ lowercaseSearch }`)
-        console.log("this is the query response: ", response)
         const responseData = response.data
 
         const pokemon = {
