@@ -6,10 +6,12 @@ const cartController = require('../controllers/carts')
 const { requireToken } = require("../middleware/auth-middleware")
 
 
-router.post('/addPokeBall', requireToken, cartController.addBall)
-router.post('/addPokemon/:id', requireToken, cartController.addPoke)
+router.put('/addPokeBall', requireToken, cartController.addBall)
+router.put('/addPokemon/:id', requireToken, cartController.addPoke)
 router.post('/create', requireToken, cartController.create)
 router.get('/index', requireToken, cartController.view)
+router.put('/addPoke', requireToken, cartController.plusle)
+router.put('removePoke', requireToken, cartController.minun)
 
 
 
