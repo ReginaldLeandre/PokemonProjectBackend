@@ -31,9 +31,13 @@ const createCart = async (req, res) => {
 const viewCart = async (req, res) => {
 
     try{
-       const user = req.user
-       const cart = await Cart.findOne({user: user._id})
-       return res.status(200).json(cart)
+        const user = req.user
+        const cart = await Cart.findOne({user: user._id})
+        const updatedPrice = calculateTotalPriceOfCart(cart)
+
+        cart.totalPrice = updatedPrice
+        await cart.save()    
+        return res.status(200).json(cart)
    
     }
       catch(error) {
@@ -45,7 +49,7 @@ const viewCart = async (req, res) => {
 const decreasePokeItem = async (req, res) => {
 
     try{
-      const reqUser = req.user
+    const reqUser = req.user
     const cart = await Cart.findOne({user: reqUser._id})
     const pokeName = req.body.pokemonName
     const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokeName)
@@ -64,6 +68,7 @@ const decreasePokeItem = async (req, res) => {
                 (pokemonObject) => pokemonObject.pokemon.pokemonName !== pokeName
             )
             cart.totalItems--
+            
             await cart.save()
             return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`)
         }
@@ -75,14 +80,46 @@ const decreasePokeItem = async (req, res) => {
 
 }
 
-const addPokeToCart = async (req, res) => {
+
+const increasePokeItem = async (req, res) => {
+    try{
+    const reqUser = req.user
+    const cart = await Cart.findOne({user: reqUser._id})
+    const pokeName = req.body.pokemonName
+    const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokeName)
+    console.log("This is the found pokemon: ", foundPoke)
+    if(foundPoke){
+        foundPoke.quantity++
+        cart.totalItems++
+        await cart.save()
+        return res.status(200).json(`More ${foundPoke.pokemon.pokemonName} has been added from the cart!`)
+        
+    }
+    }
+    catch(error){
+
+    }
+}
+
+const addPokeToCartFromShowPage = async (req, res) => {
     try {
-        const user = req.user
+        const reqUser = req.user
         let price = 0
         
-        const cart = await Cart.findOne({ user: user._id })
+        const cartOne = await Cart.findOne({ user: reqUser._id })
         const id = req.params.id
-        
+
+
+        if(!cartOne) {
+            const newCart = {
+                user: reqUser._id
+            } 
+
+            await Cart.create(newCart)
+        }
+
+        const cart = await Cart.findOne({ user: user._id })
+
         const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokeDexId === parseInt(id))
         console.log("This is the found pokemon: ", foundPoke)
         if(foundPoke){
@@ -273,8 +310,10 @@ const purchaseFromCart = async (req, res) => {
 
 module.exports = {
     create: createCart,
-    addPoke: addPokeToCart,
+    addPoke: addPokeToCartFromShowPage,
     addBall: addPokeBallToCart,
     view: viewCart,
-    purchase: purchaseFromCart
+    purchase: purchaseFromCart,
+    minun: decreasePokeItem,
+    plusle: increasePokeItem
 }
