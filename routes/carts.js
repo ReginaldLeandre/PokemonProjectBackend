@@ -11,7 +11,7 @@ router.put('/addPokemon/:id', requireToken, cartController.addPoke)
 router.post('/create', requireToken, cartController.create)
 router.get('/index', requireToken, cartController.view)
 router.put('/addPoke', requireToken, cartController.plusle)
-router.put('removePoke', requireToken, cartController.minun)
+router.put('/removePoke', requireToken, cartController.minun)
 
 
 

@@ -47,59 +47,74 @@ const viewCart = async (req, res) => {
    }
    
 const decreasePokeItem = async (req, res) => {
+  try {
+    const reqUser = req.user;
+    const cart = await Cart.findOne({ user: reqUser._id });
+    const { pokemonName } = req.query
 
-    try{
-    const reqUser = req.user
-    const cart = await Cart.findOne({user: reqUser._id})
-    const pokeName = req.body.pokemonName
-    const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokeName)
-    console.log("This is the found pokemon: ", foundPoke)
-    if(foundPoke){
-        if(foundPoke.quantity > 1) {
-            foundPoke.quantity--
-            console.log("This is the found pokemon's quantity: ", foundPoke.quantity)
-            cart.totalItems--
-            console.log("This is the cart's total items: ", cart.totalItems)
-            await cart.save()
-            return res.status(200).json(`The number of ${foundPoke.pokemon.pokemonName}s has been decreased from the cart!`)
+    // if (!pokeName) {
+    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' });
+    // }
+
+    const foundPoke = cart.pokemonItems.find(
+      (pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName
+    );
+
+    // if (!foundPoke) {
+    //   return res.status(404).json({ error: 'Pokemon not found in the cart' });
+    // }
+
+    if (foundPoke.quantity > 1) {
+      foundPoke.quantity--;
+      cart.totalItems--;
+
+      await cart.save();
+      return res.status(200).json(`The number of ${foundPoke.pokemon.pokemonName}s has been decreased from the cart!`);
+        } 
+    
+    else if (foundPoke.quantity === 1) {
+      cart.pokemonItems = cart.pokemonItems.filter(
+        (pokemonObject) => pokemonObject.pokemon.pokemonName !== pokemonName
+      );
+      cart.totalItems--;
+
+      await cart.save();
+      return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`);
         }
-        else if(foundPoke.quantity === 1) {
-            cart.pokemonItems = cart.pokemonItems.filter(
-                (pokemonObject) => pokemonObject.pokemon.pokemonName !== pokeName
-            )
-            cart.totalItems--
-            
-            await cart.save()
-            return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`)
-        }
-    }
-    }
-    catch(error) {
-        return res.status(400).json({ error: error.message})
-    }
 
-}
-
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 
 const increasePokeItem = async (req, res) => {
-    try{
-    const reqUser = req.user
-    const cart = await Cart.findOne({user: reqUser._id})
-    const pokeName = req.body.pokemonName
-    const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokeName)
-    console.log("This is the found pokemon: ", foundPoke)
-    if(foundPoke){
-        foundPoke.quantity++
-        cart.totalItems++
-        await cart.save()
-        return res.status(200).json(`More ${foundPoke.pokemon.pokemonName} has been added from the cart!`)
-        
-    }
-    }
-    catch(error){
+  try {
+    const reqUser = req.user;
+    const cart = await Cart.findOne({ user: reqUser._id });
+    const { pokemonName } = req.query
 
-    }
-}
+    // if (!pokeName) {
+    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' });
+    // }
+
+    const foundPoke = cart.pokemonItems.find(
+      (pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName
+    );
+
+    // if (!foundPoke) {
+    //   return res.status(404).json({ error: 'Pokemon not found in the cart' });
+    // }
+
+    foundPoke.quantity++;
+    cart.totalItems++;
+
+    await cart.save();
+    return res.status(200).json(`More ${foundPoke.pokemon.pokemonName} has been added from the cart!`);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
 
 const addPokeToCartFromShowPage = async (req, res) => {
     try {
