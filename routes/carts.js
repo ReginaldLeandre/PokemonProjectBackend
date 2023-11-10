@@ -7,7 +7,7 @@ const { requireToken } = require("../middleware/auth-middleware")
 
 
 router.put('/addPokeBall', requireToken, cartController.addBall)
-router.put('/addPokemon/:id', requireToken, cartController.addPoke)
+router.put('/addPokemonPage', requireToken, cartController.addPokeId)
 router.post('/create', requireToken, cartController.create)
 router.get('/index', requireToken, cartController.view)
 router.put('/addPoke', requireToken, cartController.plusle)

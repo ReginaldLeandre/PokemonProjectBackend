@@ -122,7 +122,7 @@ const addPokeToCartFromShowPage = async (req, res) => {
         let price = 0
         
         const cartOne = await Cart.findOne({ user: reqUser._id })
-        const id = req.params.id
+        const { pokemonName } = req.query
 
 
         if(!cartOne) {
@@ -133,9 +133,9 @@ const addPokeToCartFromShowPage = async (req, res) => {
             await Cart.create(newCart)
         }
 
-        const cart = await Cart.findOne({ user: user._id })
+        const cart = await Cart.findOne({ user: reqUser._id })
 
-        const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokeDexId === parseInt(id))
+        const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName)
         console.log("This is the found pokemon: ", foundPoke)
         if(foundPoke){
             foundPoke.quantity++
@@ -146,12 +146,12 @@ const addPokeToCartFromShowPage = async (req, res) => {
             return res.status(200).json(`Another ${foundPoke.pokemon.pokemonName} has been added to the cart!`)
         }
         
-        const response = await axios.get(`${BASE_URL}pokemon/${id}`)
+        const response = await axios.get(`${BASE_URL}pokemon/${pokemonName}`)
 
        
         const responseData = response.data
 
-        const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${id}`)
+        const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokemonName}`)
         const secondData = secondResponse.data
 
         if (secondData.is_legendary === false && secondData.is_mythical === false) {
@@ -174,6 +174,7 @@ const addPokeToCartFromShowPage = async (req, res) => {
         await cart.save()
         return res.status(200).json(`${addedPokemon.pokemonName} has been added to your Cart`)
     } catch (error) {
+        console.log(error)
         return res.status(400).json({ error: error.message })
     }
 }
@@ -325,10 +326,10 @@ const purchaseFromCart = async (req, res) => {
 
 module.exports = {
     create: createCart,
-    addPoke: addPokeToCartFromShowPage,
     addBall: addPokeBallToCart,
     view: viewCart,
     purchase: purchaseFromCart,
     minun: decreasePokeItem,
-    plusle: increasePokeItem
+    plusle: increasePokeItem,
+    addPokeId: addPokeToCartFromShowPage
 }
