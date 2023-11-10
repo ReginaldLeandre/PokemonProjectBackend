@@ -1,7 +1,7 @@
 const { PokeBall, Cart, PokeMon, User } = require('../models')
 const { calculateTotalPriceOfCart } = require('../utils/cartUtil')
 const axios = require('axios')
-const { handleValidateOwnership } = require("../middleware/auth-middleware");
+const { handleValidateOwnership } = require("../middleware/auth-middleware")
 const BASE_URL = process.env.BASE_URL
 
 const createCart = async (req, res) => {
@@ -48,72 +48,72 @@ const viewCart = async (req, res) => {
    
 const decreasePokeItem = async (req, res) => {
   try {
-    const reqUser = req.user;
-    const cart = await Cart.findOne({ user: reqUser._id });
+    const reqUser = req.user
+    const cart = await Cart.findOne({ user: reqUser._id })
     const { pokemonName } = req.query
 
     // if (!pokeName) {
-    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' });
+    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' })
     // }
 
     const foundPoke = cart.pokemonItems.find(
       (pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName
-    );
+    )
 
     // if (!foundPoke) {
-    //   return res.status(404).json({ error: 'Pokemon not found in the cart' });
+    //   return res.status(404).json({ error: 'Pokemon not found in the cart' })
     // }
 
     if (foundPoke.quantity > 1) {
-      foundPoke.quantity--;
-      cart.totalItems--;
+      foundPoke.quantity--
+      cart.totalItems--
 
-      await cart.save();
-      return res.status(200).json(`The number of ${foundPoke.pokemon.pokemonName}s has been decreased from the cart!`);
+      await cart.save()
+      return res.status(200).json(`The number of ${foundPoke.pokemon.pokemonName}s has been decreased from the cart!`)
         } 
     
     else if (foundPoke.quantity === 1) {
       cart.pokemonItems = cart.pokemonItems.filter(
         (pokemonObject) => pokemonObject.pokemon.pokemonName !== pokemonName
-      );
-      cart.totalItems--;
+      )
+      cart.totalItems--
 
-      await cart.save();
-      return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`);
+      await cart.save()
+      return res.status(200).json(`The last ${foundPoke.pokemon.pokemonName} has been removed from the cart!`)
         }
 
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message })
   }
-};
+}
 
 const increasePokeItem = async (req, res) => {
   try {
-    const reqUser = req.user;
-    const cart = await Cart.findOne({ user: reqUser._id });
+    const reqUser = req.user
+    const cart = await Cart.findOne({ user: reqUser._id })
     const { pokemonName } = req.query
 
     // if (!pokeName) {
-    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' });
+    //   return res.status(400).json({ error: 'Invalid or missing pokemonName in the request body' })
     // }
 
     const foundPoke = cart.pokemonItems.find(
       (pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName
-    );
+    )
 
     // if (!foundPoke) {
-    //   return res.status(404).json({ error: 'Pokemon not found in the cart' });
+    //   return res.status(404).json({ error: 'Pokemon not found in the cart' })
     // }
 
-    foundPoke.quantity++;
-    cart.totalItems++;
+    foundPoke.quantity++
+    cart.totalItems++
 
-    await cart.save();
-    return res.status(200).json(`More ${foundPoke.pokemon.pokemonName} has been added from the cart!`);
+    await cart.save()
+    return res.status(200).json(`More ${foundPoke.pokemon.pokemonName} has been added from the cart!`)
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message })
   }
-};
+}
 
 
 const addPokeToCartFromShowPage = async (req, res) => {
