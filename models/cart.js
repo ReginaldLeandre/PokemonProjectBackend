@@ -16,8 +16,10 @@ const cartSchema = new Schema({
         type: Number,
         default: 0,
       },
-      
-      
+      price: {
+        type: Number,
+        default: 0
+      }
     },
   ],
   pokeBallItems: [
@@ -29,8 +31,20 @@ const cartSchema = new Schema({
         type: Number,
         default: 0,
       },
+      price: {
+        type: Number,
+        default: 0
+      }
     },
   ],
+  subTotal: {
+    type: Number,
+    default: 0
+  },
+  salesTax: {
+    type: Number,
+    default: 0
+  },
   totalItems: {
     type: Number,
     default: 0

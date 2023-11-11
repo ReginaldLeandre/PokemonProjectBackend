@@ -35,7 +35,9 @@ const viewCart = async (req, res) => {
         const cart = await Cart.findOne({user: user._id})
         const updatedPrice = calculateTotalPriceOfCart(cart)
 
-        cart.totalPrice = updatedPrice
+        cart.salesTax = updatedPrice.salesTax
+        cart.subTotal = updatedPrice.subtotal
+        cart.totalPrice = updatedPrice.total
         await cart.save()    
         return res.status(200).json(cart)
    
