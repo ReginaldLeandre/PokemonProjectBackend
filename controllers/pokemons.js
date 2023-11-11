@@ -127,15 +127,18 @@ catch(error){
 
 const catchPokemon = async (req, res) => {
     try {
+
         let dateObj = new Date()
         let month = dateObj.getUTCMonth() + 1 
         let day = dateObj.getUTCDate()
         let year = dateObj.getUTCFullYear()
 
         newdate = `${month}/${day}/${year}`
-        const pokeName = req.body.pokemonName
-        const ballType = req.body.ballType
-        
+        const { pokemonName } = req.query
+        const { ballType } = req.query
+        const reqUser = req.user
+
+        const user = await User.findById(reqUser._id)
         
         let catchRateModifier = 1
         switch (ballType) {
@@ -158,15 +161,17 @@ const catchPokemon = async (req, res) => {
             const catching = getRandomNumber(1, 100)
     
             if (catching * catchRateModifier <= 50 ) {
-                return res.status(200).json(`${pokeName} broke free!!`)
+                return res.status(200).json({catchingPokemonMsg: `${pokemonName} broke free!!`}
+                )
             } else if (catching * catchRateModifier <= 85) {
-                return res.status(200).json('Darn! Almost caught!')
-            } 
+                return res.status(200).json({catchingPokemonMsg: 'Darn! Almost caught!'}
+                )
+            }   
             else {
-                const response = await axios.get(`${BASE_URL}pokemon/${pokeName}`)
+                const response = await axios.get(`${BASE_URL}pokemon/${pokemonName}`)
                 const responseData = response.data
 
-                const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokeName}`)
+                const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokemonName}`)
                 const secondResponseData = secondResponse.data
                 
                 let englishFlavorText = null
@@ -196,8 +201,6 @@ const catchPokemon = async (req, res) => {
                     pokeDexId: responseData.id,
                     description: englishFlavorText,
                     front: responseData.sprites.front_default,
-                    back: responseData.sprites.back_default,
-                    dreamWorld: responseData.sprites.other.dream_world.front_default,
                     home: responseData.sprites.other.home.front_default,
                     abilities: ability,
                     type: responseData.types.map(typeData => typeData.type.name),
@@ -207,15 +210,19 @@ const catchPokemon = async (req, res) => {
                         })),
                     caught: true,
                     caughtOrPurchased: newdate,
-                    pokeBall: ballType    
+                    pokeBall: ballType,
+                    trainer: reqUser._id     
 
                 }
                   
                 const newPokemon = await PokeMon.create(pokemon)
-
-                return res.status(200).json(`Gotcha! ${pokeName} has been caught! `)
+                console.log("This is the created POKEMON: ", newPokemon)
+                user.pokemon.push(newPokemon._id)
+                await user.save()
+                return res.status(200).json({pokemon: pokemon, catchingPokemonMsg: `Gotcha! ${pokemonName} has been caught! `})
             }
         } catch (error) {
+            console.log("This is the error msg:", error)
             return res.status(400).json({ error: error.message })
         }
     }

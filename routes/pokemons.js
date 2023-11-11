@@ -6,7 +6,7 @@ const pokemonCtrl = require('../controllers/pokemons')
 
 
 router.get('/pokemon', pokemonCtrl.getRan)
-router.post('/catch', pokemonCtrl.catch)
+router.post('/pokemon/catch', requireToken, pokemonCtrl.catch)
 router.get('/:id', pokemonCtrl.show)
 router.get('/pokemon/encounter', pokemonCtrl.encounter)
 router.get('/pokemon/search', pokemonCtrl.search)
