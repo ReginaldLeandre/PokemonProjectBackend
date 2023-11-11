@@ -1,5 +1,5 @@
 const { PokeBall, Cart, PokeMon, User } = require('../models')
-const { calculateTotalPriceOfCart } = require('../utils/cartUtil')
+const { calculateTotalPriceOfCart, calculateIndividualPrice } = require('../utils/cartUtil')
 const axios = require('axios')
 const { handleValidateOwnership } = require("../middleware/auth-middleware")
 const BASE_URL = process.env.BASE_URL
@@ -34,6 +34,11 @@ const viewCart = async (req, res) => {
         const user = req.user
         const cart = await Cart.findOne({user: user._id})
         const updatedPrice = calculateTotalPriceOfCart(cart)
+        const calculatedPrice = calculateIndividualPrice(cart)
+
+
+
+        cart.pokemonItems.price = calculatedPrice.calculatedPrice
 
         cart.salesTax = updatedPrice.salesTax
         cart.subTotal = updatedPrice.subtotal
@@ -184,7 +189,7 @@ const addPokeToCartFromShowPage = async (req, res) => {
 const addPokeBallToCart = async (req, res) => {
     try {
         const user = req.user
-        const type = req.body.ballType
+        const type = req.query
         const foundUser = await User.findOne({ username: user.username })
         const cart = await Cart.findOne({ user: user._id })
         let price = 0
@@ -206,10 +211,10 @@ const addPokeBallToCart = async (req, res) => {
                 break
             case 'MasterBall':
                 if (foundUser.purchasedAMasterBall === true) {
-                    return res.status(200).json('One MasterBall can be purchased per account.')
+                    return res.status(200).json({masterBallError: 'One MasterBall can be purchased per account.'})
                 }
                 if (cart.pokeBallItems.some((item) => item.pokeBall.ballType === 'MasterBall')) {
-                    return res.status(200).json('You can only purchase one MasterBall per account')
+                    return res.status(200).json({masterBallError: 'You can only purchase one MasterBall per account.'})
                 }
                 price = 50
                 break

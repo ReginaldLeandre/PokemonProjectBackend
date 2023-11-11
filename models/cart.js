@@ -16,7 +16,11 @@ const cartSchema = new Schema({
         type: Number,
         default: 0,
       },
-      price: {
+      basePrice: {
+        type: Number,
+        default: 0
+      },
+      calcPrice: {
         type: Number,
         default: 0
       }
