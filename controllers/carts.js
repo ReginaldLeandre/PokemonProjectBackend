@@ -3,6 +3,10 @@ const { calculateTotalPriceOfCart, calculateIndividualPrice } = require('../util
 const axios = require('axios')
 const { handleValidateOwnership } = require("../middleware/auth-middleware")
 const BASE_URL = process.env.BASE_URL
+const pokeBall = '../pokeballs/pokeball.webp'
+const greatBall = '../pokeballs/greatball.webp'
+const ultraBall = '../pokeballs/ultraball.webp'
+const masterBall = '../pokeballs/masterball.webp'
 
 const createCart = async (req, res) => {
     try {
@@ -188,26 +192,35 @@ const addPokeToCartFromShowPage = async (req, res) => {
 
 const addPokeBallToCart = async (req, res) => {
     try {
-        const user = req.user
-        const type = req.query
-        const foundUser = await User.findOne({ username: user.username })
-        const cart = await Cart.findOne({ user: user._id })
-        let price = 0
+        const reqUser = req.user
+        const { ballType } = req.query
+        const foundUser = await User.findOne({ _id: reqUser._id })
+        const cartOne = await Cart.findOne({ user: reqUser._id })
 
-        const addedPokeBall = {
-            ballType: type,
-            price: price,
+        if(!cartOne) {
+            const newCart = {
+                user: reqUser._id
+            } 
+
+            await Cart.create(newCart)
         }
 
-        switch (type) {
+        const cart = await Cart.findOne({ user: reqUser._id })
+        let price = 0
+        let ballImage = null
+
+        switch (ballType) {
             case 'PokeBall':
                 price = 5
+                ballImage = pokeBall
                 break
             case 'GreatBall':
                 price = 10
+                ballImage = greatBall
                 break
             case 'UltraBall':
                 price = 20
+                ballImage = ultraBall
                 break
             case 'MasterBall':
                 if (foundUser.purchasedAMasterBall === true) {
@@ -217,25 +230,33 @@ const addPokeBallToCart = async (req, res) => {
                     return res.status(200).json({masterBallError: 'You can only purchase one MasterBall per account.'})
                 }
                 price = 50
+                ballImage = masterBall
                 break
             default:
                 break
         }
-
-        const existingItem = cart.pokeBallItems.find((item) => item.pokeBall.ballType === type)
+        const addedPokeBall = {
+            ballType: ballType,
+            image: ballImage,
+            price: price
+        }
+        const existingItem = cart.pokeBallItems.find((item) => item.pokeBall.ballType === ballType)
         if (existingItem) {
-            existingItem.quantity += 1
+            existingItem.quantity +=1
+            cart.totalItems +=1
         } else {
             const newPokeBall = {
                 pokeBall: addedPokeBall,
-                quantity: 1,
+                quantity: +1,
             }
             cart.pokeBallItems.push(newPokeBall)
+            cart.totalItems +=1
         }
-        cart.totalItems =+1
         await cart.save()
-        return res.status(200).json(`A ${type} has been added to your Cart`)
+        console.log("Cart updated successfully:", cart)
+        return res.status(200).json({ pokeballCartMsg: `A ${ballType} has been added to your Cart` })        
     } catch (error) {
+        console.log("This is the error coming from the add Pokeball cart function: ", error)
         return res.status(400).json({ error: error.message })
     }
 }
