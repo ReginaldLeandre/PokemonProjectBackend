@@ -233,24 +233,10 @@ const searchPokemon = async (req, res) => {
 
     try {
         const { pokemonName } = req.query
-        console.log("this is the query id: ", pokemonName)
+        console.log("this is the query pokemon Id or name: ", pokemonName)
         const lowercaseSearch = pokemonName.toLowerCase()
         console.log("this is the query lowercaseSearch: ",lowercaseSearch)
         const response = await axios.get(`${BASE_URL}pokemon/${ lowercaseSearch }`)
-
-
-
-        
-        if(!response.data) {
-            if (!isNaN(parseInt(pokemonName))) {
-                return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid National PokeDex ID`})
-            }
-            else {
-               return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid pokemon!`}) 
-            }
-            
-        }
-
         
         const responseData = response.data
 
@@ -262,22 +248,20 @@ const searchPokemon = async (req, res) => {
         res.status(200).json(pokemon)
     }
     catch(error){
-        console.log(error)
-        res.status(400).json({error: error.message})
+        const { pokemonName } = req.query
+
+        console.log("This is the catch of the search function: ", error)
+        if (!isNaN(parseInt(pokemonName))) {
+            console.log("This is integer if statement was hit: ", pokemonName)
+            return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid National PokeDex ID`, SearchErrorMessage: error.message})
+        }
+        else {
+            console.log("This is spelling if statement was hit: ", pokemonName)
+            return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid pokemon. Please check spelling.`, SearchErrorMessage: error.message}) 
+        }
     }  
 }    
 
-
-const userPokemon = async (req, res) => {
-
-    try {
-        
-    }
-    catch(error) {
-        console.log("This is the userPokemon show page error: ", error)
-        return res.status(400).json({userPokemonError: error.message})
-      }
-}
 
 
 module.exports = {

@@ -83,9 +83,27 @@ const show = async (req, res) => {
 }
 
 
+const userPokemonShow = async (req,res) => {
+  try {
+    const reqUser = req.user
+    const id = req.params.id
+    const user = await User.findById(reqUser._id)
+    const allUserPokemon = await PokeMon.find({trainer: reqUser._id})
+
+    const matchingPokemon = allUserPokemon.find(pokemon => pokemon.pokeDexId === parseInt(id))
+
+   return res.status(200).json({pokemon: matchingPokemon, user: user})
+  }
+  catch(error) {
+    console.log("This is the user's pokemon show page error: ", error)
+    return res.status(400).json({userPokemonShowError: error.message})
+  }
+}
+
 module.exports = {
   register,
   login,
   logout,
-  show
+  show,
+  UpokeShow: userPokemonShow
 }

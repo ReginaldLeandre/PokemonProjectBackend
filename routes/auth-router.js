@@ -8,5 +8,6 @@ router.post("/register", authCtrl.register)
 router.get('/logout', requireToken, authCtrl.logout)
 router.get('/userShow', requireToken, authCtrl.show)
 router.post("/login", authCtrl.login)
+router.get('/user/pokemon/:id', requireToken, authCtrl.UpokeShow)
 
 module.exports = router
