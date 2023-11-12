@@ -106,7 +106,7 @@ const showPokemon = async (req, res) => {
 const encounterPokemon = async (req, res) => {
 
     try {
-        const allRegions = getRandomNumber(1, 905)
+        const allRegions = getRandomNumber(386, 386)
         const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
         const responseData = response.data
 
@@ -187,12 +187,19 @@ const catchPokemon = async (req, res) => {
                     responseData.abilities.map(async (abilityData) => {
                         const abilityResponse = await axios.get(abilityData.ability.url)
                         const abilityName = abilityData.ability.name
-                        const abilityDescription = abilityResponse.data.effect_entries.find(
+                
+                        // Find the first English flavor text entry
+                        const englishFlavorTextEntry = abilityResponse.data.flavor_text_entries.find(
                             (entry) => entry.language.name === 'en'
                         )
+                
+                        const abilityDescription = englishFlavorTextEntry
+                            ? englishFlavorTextEntry.flavor_text
+                            : 'This ability has no description available'
+                
                         return {
-                            name: abilityName,
-                            description: abilityDescription ? abilityDescription.effect : 'No description available',
+                            abilityName: abilityName,
+                            abilityDescription: abilityDescription,
                         }
                     })
                 )
@@ -225,7 +232,7 @@ const catchPokemon = async (req, res) => {
             console.log("This is the error msg:", error)
             return res.status(400).json({ error: error.message })
         }
-    }
+}
 
 
 const searchPokemon = async (req, res) => {
