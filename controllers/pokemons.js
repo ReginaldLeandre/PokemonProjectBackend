@@ -238,10 +238,20 @@ const searchPokemon = async (req, res) => {
         console.log("this is the query lowercaseSearch: ",lowercaseSearch)
         const response = await axios.get(`${BASE_URL}pokemon/${ lowercaseSearch }`)
 
+
+
+        
         if(!response.data) {
-            return res.status(404).json({spellingMessage: `${pokemon} might be spelled incorrectly!`})
+            if (!isNaN(parseInt(pokemonName))) {
+                return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid National PokeDex ID`})
+            }
+            else {
+               return res.status(404).json({spellingOrIdError: `${pokemonName} is not a valid pokemon!`}) 
+            }
+            
         }
 
+        
         const responseData = response.data
 
         const pokemon = {
@@ -256,6 +266,18 @@ const searchPokemon = async (req, res) => {
         res.status(400).json({error: error.message})
     }  
 }    
+
+
+const userPokemon = async (req, res) => {
+
+    try {
+        
+    }
+    catch(error) {
+        console.log("This is the userPokemon show page error: ", error)
+        return res.status(400).json({userPokemonError: error.message})
+      }
+}
 
 
 module.exports = {
