@@ -129,8 +129,8 @@ const addPokeToCartFromShowPage = async (req, res) => {
         let price = 0
         
         const cartOne = await Cart.findOne({ user: reqUser._id })
-        const { pokemonName } = req.query
-
+        const { pokeDexId } = req.query
+        console.log("This is the pokeDexId from pokemon show page: ", pokeDexId)
 
         if(!cartOne) {
             const newCart = {
@@ -142,23 +142,23 @@ const addPokeToCartFromShowPage = async (req, res) => {
 
         const cart = await Cart.findOne({ user: reqUser._id })
 
-        const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokemonName === pokemonName)
-        console.log("This is the found pokemon: ", foundPoke)
+        const foundPoke = cart.pokemonItems.find((pokemonObject) => pokemonObject.pokemon.pokeDexId === parseInt(pokeDexId))
+        console.log("This is the found pokemon from pokemon show page: ", foundPoke)
         if(foundPoke){
             foundPoke.quantity++
-            console.log("This is the found pokemon's quantity: ", foundPoke.quantity)
+            console.log("This is the found pokemon's quantity from pokemon show page: ", foundPoke.quantity)
             cart.totalItems++
-            console.log("This is the cart's total items: ", cart.totalItems)
+            console.log("This is the cart's total items from pokemon show page: ", cart.totalItems)
             await cart.save()
             return res.status(200).json(`Another ${foundPoke.pokemon.pokemonName} has been added to the cart!`)
         }
         
-        const response = await axios.get(`${BASE_URL}pokemon/${pokemonName}`)
+        const response = await axios.get(`${BASE_URL}pokemon/${pokeDexId}`)
 
        
         const responseData = response.data
 
-        const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokemonName}`)
+        const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokeDexId}`)
         const secondData = secondResponse.data
 
         if (secondData.is_legendary === false && secondData.is_mythical === false) {
@@ -179,7 +179,7 @@ const addPokeToCartFromShowPage = async (req, res) => {
         cart.pokemonItems.push({ pokemon: addedPokemon, quantity: 1 })
         cart.totalItems +=1
         await cart.save()
-        return res.status(200).json(`${addedPokemon.pokemonName} has been added to your Cart`)
+        return res.status(200).json({addPokeToCartFromShowPage: `${addedPokemon.pokemonName} has been added to your Cart`})
     } catch (error) {
         console.log(error)
         return res.status(400).json({ error: error.message })
@@ -331,6 +331,30 @@ const purchaseFromCart = async (req, res) => {
     }
 }
 
+const emptyCart = async (req, res) => {
+
+    try {
+       const user = req.user
+    const cart = await Cart.findOne({user: user._id})
+
+    cart.pokemonItems = []
+    cart.pokeBallItems = []
+    cart.subTotal = 0
+    cart.salesTax = 0
+    cart.totalItems = 0
+    cart.totalPrice = 0
+    await cart.save()
+
+    res.status(200).json({cart: cart, emptyCartMessage: "Your cart has been emptied!"}) 
+    }
+    
+    catch(error) {
+        console.log("This is the error messsage emptyCart", error)
+        return res.status(400).json({error: error.message})
+    }
+}
+
+
 module.exports = {
     create: createCart,
     addBall: addPokeBallToCart,
@@ -338,5 +362,6 @@ module.exports = {
     purchase: purchaseFromCart,
     minun: decreasePokeItem,
     plusle: increasePokeItem,
-    addPokeId: addPokeToCartFromShowPage
+    addPokeId: addPokeToCartFromShowPage,
+    empty: emptyCart
 }

@@ -1,6 +1,7 @@
-const { User } = require("../models")
+const { User, PokeBall, PokeMon } = require("../models")
 const bcrypt = require("bcrypt");
 const { createUserToken } = require("../middleware/auth-middleware")
+
 
 
 async function register (req, res) {
@@ -60,8 +61,31 @@ async function logout (req, res) {
   }
 }
 
+const show = async (req, res) => {
+  try {
+    const reqUser = req.user
+    const user = await User.findById(reqUser._id)
+    const allUserPokemon = await PokeMon.find({trainer: reqUser._id})
+    const allUserPokeBall = await PokeBall.find({trainer: reqUser._id})
+
+    const userShowPageObject = {
+      user: user,
+      allUserPokemon: allUserPokemon,
+      allUserPokeBall: allUserPokeBall
+    }
+
+    return res.status(200).json(userShowPageObject)
+  }
+  catch(error) {
+    console.log("This is the user show page error: ", error)
+    return res.status(400).json({userShowError: error.message})
+  }
+}
+
+
 module.exports = {
   register,
   login,
-  logout
+  logout,
+  show
 }

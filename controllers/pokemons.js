@@ -134,7 +134,7 @@ const catchPokemon = async (req, res) => {
         let year = dateObj.getUTCFullYear()
 
         newdate = `${month}/${day}/${year}`
-        const { pokemonName } = req.query
+        const { pokeDexId } = req.query
         const { ballType } = req.query
         const reqUser = req.user
 
@@ -161,17 +161,17 @@ const catchPokemon = async (req, res) => {
             const catching = getRandomNumber(1, 100)
     
             if (catching * catchRateModifier <= 50 ) {
-                return res.status(200).json({catchingPokemonMsg: `${pokemonName} broke free!!`}
+                return res.status(200).json({catchingPokemonMsg: `It broke free!!`}
                 )
             } else if (catching * catchRateModifier <= 85) {
                 return res.status(200).json({catchingPokemonMsg: 'Darn! Almost caught!'}
                 )
             }   
             else {
-                const response = await axios.get(`${BASE_URL}pokemon/${pokemonName}`)
+                const response = await axios.get(`${BASE_URL}pokemon/${pokeDexId}`)
                 const responseData = response.data
 
-                const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokemonName}`)
+                const secondResponse = await axios.get(`${BASE_URL}pokemon-species/${pokeDexId}`)
                 const secondResponseData = secondResponse.data
                 
                 let englishFlavorText = null
@@ -219,7 +219,7 @@ const catchPokemon = async (req, res) => {
                 console.log("This is the created POKEMON: ", newPokemon)
                 user.pokemon.push(newPokemon._id)
                 await user.save()
-                return res.status(200).json({pokemon: pokemon, catchingPokemonMsg: `Gotcha! ${pokemonName} has been caught! `})
+                return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `})
             }
         } catch (error) {
             console.log("This is the error msg:", error)
@@ -233,10 +233,15 @@ const searchPokemon = async (req, res) => {
 
     try {
         const { pokemonName } = req.query
-        console.log("this is the query name: ", pokemonName)
+        console.log("this is the query id: ", pokemonName)
         const lowercaseSearch = pokemonName.toLowerCase()
         console.log("this is the query lowercaseSearch: ",lowercaseSearch)
         const response = await axios.get(`${BASE_URL}pokemon/${ lowercaseSearch }`)
+
+        if(!response.data) {
+            return res.status(404).json({spellingMessage: `${pokemon} might be spelled incorrectly!`})
+        }
+
         const responseData = response.data
 
         const pokemon = {

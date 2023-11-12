@@ -5,8 +5,8 @@ const { requireToken } = require("../middleware/auth-middleware")
 
 
 router.post("/register", authCtrl.register)
-router.get('./logout', requireToken, authCtrl.logout)
-
+router.get('/logout', requireToken, authCtrl.logout)
+router.get('/userShow', requireToken, authCtrl.show)
 router.post("/login", authCtrl.login)
 
 module.exports = router
