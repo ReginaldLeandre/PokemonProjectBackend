@@ -1,15 +1,23 @@
 function calculateIndividualPrice(cart) {
-    let calculatedPrice = 0
-  
+    let pokemonCalculatedPrice = 0
+    let pokeBallCalculatedPrice = 0
     cart.pokemonItems.forEach((pokemonItem) => {
       const pokemonPrice = pokemonItem.pokemon.price || 0
-      calculatedPrice += pokemonPrice * pokemonItem.quantity
+      pokemonCalculatedPrice += pokemonPrice * pokemonItem.quantity
   
  
       pokemonItem.calcPrice = pokemonPrice * pokemonItem.quantity
     })
+
+    cart.pokeBallItems.forEach((pokeBallItem) => {
+      const pokeballPrice = pokeBallItem.pokeBall.price || 0
+      pokeBallCalculatedPrice += pokeballPrice * pokeBallItem.quantity
+
+
+      pokeBallItem.calcPrice = pokeballPrice * pokeBallItem.quantity
+    })
   
-    return { calculatedPrice }
+    return { pokemonCalculatedPrice, pokeBallCalculatedPrice }
   }
   
 

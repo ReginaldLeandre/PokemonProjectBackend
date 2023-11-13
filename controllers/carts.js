@@ -39,8 +39,8 @@ const viewCart = async (req, res) => {
 
 
 
-        cart.pokemonItems.price = calculatedPrice.calculatedPrice
-
+        cart.pokemonItems.calcPrice = calculatedPrice.pokemonCalculatedPrice
+        cart.pokeBallItems.calcPrice = calculatedPrice.pokeBallCalculatedPrice
         cart.salesTax = updatedPrice.salesTax
         cart.subTotal = updatedPrice.subtotal
         cart.totalPrice = updatedPrice.total
@@ -267,7 +267,10 @@ const increasePokeBall = async (req, res) => {
       const foundItem = cart.pokeBallItems.find(
         (pokeBallObject) => pokeBallObject.pokeBall.ballType === pokeBall
       )
-
+    
+      if(foundItem.pokeBall.ballType === "MasterBall" && foundItem.quantity === 1) {
+        return res.status(400).json({masterBallError: "You can only add 1 Master Ball to your cart."})
+      }
       foundItem.quantity++
       cart.totalItems++
 
