@@ -7,7 +7,7 @@ const express = require('express');
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-
+const path = require('path')
 
 
 const pokemonRouter = require('./routes/pokemons')
@@ -34,7 +34,7 @@ const authRouter = require('./routes/auth-router')
  **************************************************************************************/
 const { PORT } = process.env
 const app = express()
-
+const picturesPath = path.join(__dirname, 'pokeballs')
 
 
 
@@ -68,7 +68,7 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(bodyParser.json());
-
+app.use('/pokeballs', express.static(picturesPath))
 
 
 

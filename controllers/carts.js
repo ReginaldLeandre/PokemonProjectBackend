@@ -3,10 +3,7 @@ const { calculateTotalPriceOfCart, calculateIndividualPrice } = require('../util
 const axios = require('axios')
 const { handleValidateOwnership } = require("../middleware/auth-middleware")
 const BASE_URL = process.env.BASE_URL
-const pokeBall = '../pokeballs/pokeball.webp'
-const greatBall = '../pokeballs/greatball.webp'
-const ultraBall = '../pokeballs/ultraball.webp'
-const masterBall = '../pokeballs/masterball.webp'
+
 
 const createCart = async (req, res) => {
     try {
@@ -212,25 +209,25 @@ const addPokeBallToCart = async (req, res) => {
         switch (ballType) {
             case 'PokeBall':
                 price = 5
-                ballImage = pokeBall
+                ballImage = '/pokeballs/pokeball.jpg'
                 break
             case 'GreatBall':
                 price = 10
-                ballImage = greatBall
+                ballImage = '/pokeballs/greatball.jpg'
                 break
             case 'UltraBall':
                 price = 20
-                ballImage = ultraBall
+                ballImage = '/pokeballs/ultraball.jpg'
                 break
             case 'MasterBall':
                 if (foundUser.purchasedAMasterBall === true) {
                     return res.status(200).json({masterBallError: 'One MasterBall can be purchased per account.'})
                 }
                 if (cart.pokeBallItems.some((item) => item.pokeBall.ballType === 'MasterBall')) {
-                    return res.status(200).json({masterBallError: 'You can only purchase one MasterBall per account.'})
+                    return res.status(200).json({masterBallError: 'You can only add one MasterBall to your Cart.'})
                 }
                 price = 50
-                ballImage = masterBall
+                ballImage = '/pokeballs/masterball.jpg'
                 break
             default:
                 break
