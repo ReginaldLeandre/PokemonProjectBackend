@@ -276,6 +276,39 @@ const increasePokeBall = async (req, res) => {
     } catch (error) {
       return res.status(400).json({ error: error.message })
     }
+}
+
+const decreasePokeBall = async (req, res) => {
+    try {
+      const reqUser = req.user
+      const cart = await Cart.findOne({ user: reqUser._id })
+      const { pokeBall } = req.query
+
+      const foundItem = cart.pokeBallItems.find(
+        (pokeBallObject) => pokeBallObject.pokeBall.ballType === pokeBall
+      )
+
+      if (foundItem.quantity > 1) {
+        foundItem.quantity--
+        cart.totalItems--
+  
+        await cart.save()
+        return res.status(200).json(`The number of ${foundItem.pokeBall.ballType}s has been decreased from the cart!`)
+          } 
+      
+      else if (foundItem.quantity === 1) {
+        cart.pokeBallItems = cart.pokeBallItems.filter(
+          (pokeBallObject) => pokeBallObject.pokeBall.ballType !== pokeBall
+        )
+        cart.totalItems--
+  
+        await cart.save()
+        return res.status(200).json(`The last ${foundItem.pokeBall.ballType} has been removed from the cart!`)
+          }
+  
+    } catch (error) {
+      return res.status(400).json({ error: error.message })
+    }
   }
 
 
@@ -402,5 +435,6 @@ module.exports = {
     plusle: increasePokeItem,
     addPokeId: addPokeToCartFromShowPage,
     empty: emptyCart, 
-    increasePokeBall
+    increasePokeBall, 
+    decreasePokeBall
 }

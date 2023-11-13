@@ -13,6 +13,7 @@ router.get('/index', requireToken, cartController.view)
 router.put('/addPoke', requireToken, cartController.plusle)
 router.put('/removePoke', requireToken, cartController.minun)
 router.put('/incPokeBall', requireToken, cartController.increasePokeBall)
+router.put('/decPokeBall', requireToken, cartController.decreasePokeBall)
 router.put('/emptyCart', requireToken, cartController.empty)
 
 
