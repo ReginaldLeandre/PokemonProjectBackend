@@ -9,5 +9,6 @@ router.get('/logout', requireToken, authCtrl.logout)
 router.get('/userShow', requireToken, authCtrl.show)
 router.post("/login", authCtrl.login)
 router.get('/user/pokemon/:id', requireToken, authCtrl.UpokeShow)
+router.delete('/deleteAllPoke', requireToken, authCtrl.deleteAll)
 
 module.exports = router

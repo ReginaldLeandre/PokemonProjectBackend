@@ -100,10 +100,32 @@ const userPokemonShow = async (req,res) => {
   }
 }
 
+
+const letGoOfAllPokemon = async (req, res) => {
+  try {
+    const reqUser = req.user
+    const user = await User.findById(reqUser._id)
+    const allUserPokemon = await PokeMon.find({trainer: user._id})
+    
+    allUserPokemon.forEach(async (pokemon) => {
+      await PokeMon.findByIdAndDelete(pokemon._id)
+    })
+    user.pokemon = []
+    await user.save()
+
+    return res.status(200).json({deletedPokemonMsg: "You have deleted all of your pokemon!"})
+  }
+  catch(error) {
+    console.log("This is the user's letGoOfPokemon error: ", error)
+    return res.status(400).json({userPokemonShowError: error.message})
+  }
+}
+
 module.exports = {
   register,
   login,
   logout,
   show,
-  UpokeShow: userPokemonShow
+  UpokeShow: userPokemonShow,
+  deleteAll: letGoOfAllPokemon
 }

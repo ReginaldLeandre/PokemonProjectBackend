@@ -14,8 +14,8 @@ const userSchema = new Schema(
       required: true,
     },
     pokeballs: {
-      type: [PokeBall.schema], 
-      default: [],
+      type: [Object],
+      default: []
     },
     pokemon: {
       type: [mongoose.Schema.Types.ObjectId],

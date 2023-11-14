@@ -133,7 +133,7 @@ const catchPokemon = async (req, res) => {
         let day = dateObj.getUTCDate()
         let year = dateObj.getUTCFullYear()
 
-        newdate = `${month}/${day}/${year}`
+        const newdate = `${month}/${day}/${year}`
         const { pokeDexId } = req.query
         const { ballType } = req.query
         const reqUser = req.user

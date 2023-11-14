@@ -315,8 +315,9 @@ const decreasePokeBall = async (req, res) => {
   }
 
 
-const fetchPokemonFromPokeAPI = async (id) => {
+const fetchPokemonFromPokeAPI = async (id, user, date) => {
     try {
+        const pokeObjectId = null
         const [pokemonResponse, speciesResponse] = await Promise.all([
             axios.get(`${BASE_URL}pokemon/${id}`),
             axios.get(`${BASE_URL}pokemon-species/${id}`),
@@ -333,32 +334,36 @@ const fetchPokemonFromPokeAPI = async (id) => {
             }
         }
 
-        const abilityPromises = responseData.abilities.map(async (abilityData) => {
-            const abilityResponse = await axios.get(abilityData.ability.url)
-            const abilityName = abilityData.ability.name
-            const abilityDescription = abilityResponse.data.flavor_text_entries.find(
-                (entry) => entry.language.name === 'en'
-            )
-            return {
-                abilityName: abilityName,
-                abilityDescription: abilityDescription
-                    ? abilityDescription.flavor_text
-                    : 'This ability has no description available',
-            }
-        })
-
-        const abilities = await Promise.all(abilityPromises)
-
+        const ability = await Promise.all(
+            responseData.abilities.map(async (abilityData) => {
+                const abilityResponse = await axios.get(abilityData.ability.url)
+                const abilityName = abilityData.ability.name
         
-        const pokemon = {
+                
+                const englishFlavorTextEntry = abilityResponse.data.flavor_text_entries.find(
+                    (entry) => entry.language.name === 'en'
+                )
+        
+                const abilityDescription = englishFlavorTextEntry
+                    ? englishFlavorTextEntry.flavor_text
+                    : 'This ability has no description available'
+        
+                return {
+                    abilityName: abilityName,
+                    abilityDescription: abilityDescription,
+                }
+            })
+        )
+        
+        const fetchedPokemon = {
             pokemonName: responseData.name,
             pokeDexId: responseData.id,
             description: englishFlavorText,
             front: responseData.sprites.front_default,
             home: responseData.sprites.other.home.front_default,
-            abilities: abilities,
-            trainer: req.user._id,
-            caughtOrPurchased: Date.now(),
+            abilities: ability,
+            trainer: user._id,
+            caughtOrPurchased: date,
             type: responseData.types.map((typeData) => typeData.type.name),
             stats: responseData.stats.map((statsData) => ({
                 statName: statsData.stat.name,
@@ -366,37 +371,59 @@ const fetchPokemonFromPokeAPI = async (id) => {
             
             })),
         }
-       return await PokeMon.create(pokemon)
-
+        const secondPokeObject = {
+            pokemon: fetchedPokemon
+        }
+        return secondPokeObject
     } catch (error) {
         throw error
     }
 }
 
-const createPokeball = async(ballObject) => {
-    try {
+// const createPokeball = async (req, res, ballType) => {
+//     try {
+//         const reqUser = req.user
         
-
-    }
-    catch(error) {
-        res.status(400).json({error: error.message})
-    }
-}
+        
+//     }
+//     catch(error) {
+//         res.status(400).json({error: error.message})
+//     }
+// }
 
 const purchaseFromCart = async (req, res) => {
     try{
         const userid = req.user._id
         const cart = await Cart.findOne({user: userid})
+        const user = await User.findById(userid)
+        let dateObj = new Date()
+        let month = dateObj.getUTCMonth() + 1 
+        let day = dateObj.getUTCDate()
+        let year = dateObj.getUTCFullYear()
 
+        const newdate = `${month}/${day}/${year}`
 
-        for ( const pokemon of cart.pokemonItems.pokemon ) {
-            fetchPokemonFromPokeAPI(pokemon.pokeDexId)  
+        for (const pokemonItem of cart.pokemonItems) {
+            const { pokemon, quantity } = pokemonItem
+        
+            for (let i = 0; i < quantity-1; i++) {
+                const fetched = fetchPokemonFromPokeAPI(pokemon.pokeDexId, user, newdate)
+                let newPokemon = await PokeMon.create((await fetched).pokemon)
+                user.pokemon.push(newPokemon._id)
+            }
         }
-
+        
+        // createPokeball(cart, user)
 
 
         cart.pokemonItems = []
+        cart.pokeBallItems = []
+        cart.subTotal = 0
+        cart.salesTax = 0
+        cart.totalItems = 0
+        cart.totalPrice = 0
 
+        await user.save()
         await cart.save()
         return res.status(200).json("Items in cart have been purchased!")
     }

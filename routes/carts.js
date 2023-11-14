@@ -15,6 +15,7 @@ router.put('/removePoke', requireToken, cartController.minun)
 router.put('/incPokeBall', requireToken, cartController.increasePokeBall)
 router.put('/decPokeBall', requireToken, cartController.decreasePokeBall)
 router.put('/emptyCart', requireToken, cartController.empty)
+router.post('/purchase', requireToken, cartController.purchase)
 
 
 
