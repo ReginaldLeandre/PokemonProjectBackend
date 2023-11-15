@@ -66,7 +66,7 @@ const show = async (req, res) => {
     const reqUser = req.user
     const user = await User.findById(reqUser._id)
     const allUserPokemon = await PokeMon.find({trainer: reqUser._id})
-    const allUserPokeBall = await PokeBall.find({trainer: reqUser._id})
+    const allUserPokeBall = user.pokeballs
 
     const userShowPageObject = {
       user: user,
@@ -117,7 +117,22 @@ const letGoOfAllPokemon = async (req, res) => {
   }
   catch(error) {
     console.log("This is the user's letGoOfPokemon error: ", error)
-    return res.status(400).json({userPokemonShowError: error.message})
+    return res.status(400).json({userLetgoPokemonError: error.message})
+  }
+}
+
+
+const throwAwayPokeBalls = async (req, res) => {
+  try {
+    const reqUser = req.user
+    const user = await User.findById(reqUser._id)
+    user.pokeballs = []
+    await user.save()
+    res.status(200).json({throwAwayPokeBalls: "You have thrown away all of your pokeballs"})
+  }
+  catch(error) {
+    console.log("This is the user's letGoOfPokemon error: ", error)
+    return res.status(400).json({userThrowAwayPokeBallError: error.message})
   }
 }
 
@@ -127,5 +142,7 @@ module.exports = {
   logout,
   show,
   UpokeShow: userPokemonShow,
-  deleteAll: letGoOfAllPokemon
+  deleteAllPoke: letGoOfAllPokemon,
+  deleteAllBall: throwAwayPokeBalls
+
 }
