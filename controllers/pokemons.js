@@ -106,9 +106,10 @@ const showPokemon = async (req, res) => {
 const encounterPokemon = async (req, res) => {
 
     try {
-        const allRegions = getRandomNumber(386, 386)
+        const allRegions = getRandomNumber(1, 905)
         const response = await axios.get(`${BASE_URL}pokemon/${allRegions}`)
         const responseData = response.data
+        
 
     const pokemon = {
         pokemonName: responseData.name,
@@ -116,7 +117,7 @@ const encounterPokemon = async (req, res) => {
         home: responseData.sprites.other.home.front_default,
     }
 
-    res.status(200).json(pokemon)
+    res.status(200).json({pokemon: pokemon})
 
 }
 catch(error){
@@ -140,10 +141,32 @@ const catchPokemon = async (req, res) => {
 
         const user = await User.findById(reqUser._id)
         
+
+        
+
+
+
+        
+        console.log("This is ballType ball: ", ballType)
+
+
+
+        const result = await User.findOneAndUpdate(
+            { _id: reqUser._id, 'pokeballs.ballType': ballType, 'pokeballs.quantity': { $gt: 0 } },
+            { $inc: { 'pokeballs.$.quantity': -1 } },
+            { new: true }
+        )
+        if(!result) {
+            console.log(`No ${ballType}s left`)
+            return res.status(200).json({catchingPokemonMsg: `You have no ${ballType}s left!`})
+        }
+
+
         let catchRateModifier = 1
         switch (ballType) {
             case 'PokeBall': 
                 catchRateModifier = 1 //base chance
+                
                 break
             case 'GreatBall':
                 catchRateModifier = 1.5  // 50% higher chance
@@ -158,12 +181,12 @@ const catchPokemon = async (req, res) => {
                 break
         }
     
-            const catching = getRandomNumber(1, 100)
+            const catching = getRandomNumber(1, 1500)
     
-            if (catching * catchRateModifier <= 50 ) {
-                return res.status(200).json({catchingPokemonMsg: `It broke free!!`}
+            if (catching * catchRateModifier <= 700 ) {
+                return res.status(200).json({catchingPokemonMsg: `It broke free!`}
                 )
-            } else if (catching * catchRateModifier <= 85) {
+            } else if (catching * catchRateModifier <= 1300) {
                 return res.status(200).json({catchingPokemonMsg: 'Darn! Almost caught!'}
                 )
             }   

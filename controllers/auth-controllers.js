@@ -1,5 +1,5 @@
 const { User, PokeBall, PokeMon } = require("../models")
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt")
 const { createUserToken } = require("../middleware/auth-middleware")
 
 
@@ -27,25 +27,25 @@ async function register (req, res) {
         token: authenticatedUserToken,
       })
     } else {
-      throw new Error("Something went wrong")
+      res.status(400).json({createUserError: "There was an issue creating this user."})
     }
   } catch (err) {
-    res.status(400).json({ error : err.message });
+    res.status(400).json({ error : err.message })
   }
 }
 
 async function login(req, res ) {
   try {
-    const loggingUser = req.body.username;
-    const foundUser = await User.findOne({ username: loggingUser });
-    const token = await createUserToken(req, foundUser);
+    const loggingUser = req.body.username
+    const foundUser = await User.findOne({ username: loggingUser })
+    const token = await createUserToken(req, foundUser)
 
     res.status(200).json({
       user: foundUser,
       token,
-    });
+    })
   } catch (err) {
-    res.status(401).json({ error: err.message });
+    res.status(401).json({ error: err.message })
   }
 }
 
@@ -57,9 +57,22 @@ async function logout (req, res) {
     })
 
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err.message })
   }
 }
+
+const pokeBallShowForCatchPage = async (req, res) => {
+  try {
+    const reqUser = req.user
+    const user = await User.findById(reqUser._id)
+    return res.status(200).json({availableBalls: user.pokeballs})
+
+  }
+  catch (err) {
+    res.status(400).json({ GettingPokeBallsForCatchError: err.message })
+  }
+}
+
 
 const show = async (req, res) => {
   try {
@@ -143,6 +156,6 @@ module.exports = {
   show,
   UpokeShow: userPokemonShow,
   deleteAllPoke: letGoOfAllPokemon,
-  deleteAllBall: throwAwayPokeBalls
-
+  deleteAllBall: throwAwayPokeBalls,
+  balls4Catch: pokeBallShowForCatchPage
 }

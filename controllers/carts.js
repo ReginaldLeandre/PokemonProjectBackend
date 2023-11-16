@@ -380,32 +380,6 @@ const fetchPokemonFromPokeAPI = async (id, user, date) => {
     }
 }
 
-// const createPokeball = async (cart, user) => {
-//     try {
-//         console.log("Before updating pokeballs:", user.pokeballs)
-
-//         for (const pokeBallItem of cart.pokeBallItems) {
-//             const existingPokeball = user.pokeballs.find(pokeball => pokeball.ballType === pokeBallItem.pokeBall.ballType)
-
-//             if (pokeBallItem.pokeBall.ballType === "MasterBall") {
-//                 user.purchasedAMasterBall = true
-//             }
-
-//             if (existingPokeball) {
-//                 existingPokeball.quantity += pokeBallItem.quantity
-//             } else {
-//                 user.pokeballs.push({ ...pokeBallItem.pokeBall, quantity: pokeBallItem.quantity })
-//             }
-//         }
-
-//         console.log("After updating pokeballs:", user.pokeballs)
-//     } catch (error) {
-//         console.error(error)
-//         throw new Error("Failed to create pokeballs")
-//     }
-// }
-
-
 const purchaseFromCart = async (req, res) => {
     try {
         const userid = req.user._id
@@ -415,6 +389,7 @@ const purchaseFromCart = async (req, res) => {
         let month = dateObj.getUTCMonth() + 1
         let day = dateObj.getUTCDate()
         let year = dateObj.getUTCFullYear()
+
 
         const newdate = `${month}/${day}/${year}`
 
@@ -428,30 +403,33 @@ const purchaseFromCart = async (req, res) => {
             }
         }
 
-        console.log("Before createPokeball - user: ", user.pokeballs)
+        
+        
         for (const pokeBallItem of cart.pokeBallItems) {
             const { pokeBall, quantity } = pokeBallItem
-            const existingPokeball = user.pokeballs.find(pokeball => pokeball.ballType === pokeBall.ballType)
-
-            if (pokeBallItem.pokeBall.ballType === "MasterBall") {
+            const existingPokeball = user.pokeballs.find(pb => pb.ballType === pokeBall.ballType)
+        
+            if (pokeBall.ballType === "MasterBall") {
                 user.purchasedAMasterBall = true
             }
-
+        
             if (existingPokeball) {
-                existingPokeball.quantity += quantity
+           
+                await User.findOneAndUpdate(
+                    { _id: userid, "pokeballs.ballType": existingPokeball.ballType },
+                    { $inc: { "pokeballs.$.quantity": quantity } },
+                    { new: true }
+                )
             } else {
-                user.pokeballs.push({ ...pokeBall.ballType. pokeBall.image, quantity })
+               
+                user.pokeballs.push({ ballType: pokeBall.ballType, image: pokeBall.image, quantity })
+                await user.save()
             }
+            
         }
-        console.log("After createPokeball - user: ", user.pokeballs)
         
         
         
-        const result = await User.findOneAndUpdate(
-            { _id: userid },
-            { $set: { pokeballs: user.pokeballs } },
-            { new: true }
-          )
           cart.pokemonItems = []
           cart.pokeBallItems = []
           cart.subTotal = 0
@@ -461,8 +439,9 @@ const purchaseFromCart = async (req, res) => {
         
         await cart.save()  
         await user.save()
-        return res.status(200).json({ updatedPokeballs: result.pokeballs})
+        return res.status(200).json({CartPurchaseMsg: "You have purchased your items!"})
     } catch (error) {
+        console.log("This is the error message from Puchase: ", error.message)
         return res.status(400).json({ error: error.message })
     }
 }

@@ -11,5 +11,6 @@ router.post("/login", authCtrl.login)
 router.get('/user/pokemon/:id', requireToken, authCtrl.UpokeShow)
 router.delete('/deleteAllPoke', requireToken, authCtrl.deleteAllPoke)
 router.delete('/deleteAllBall', requireToken, authCtrl.deleteAllBall)
+router.get('/getPokeBalls', requireToken, authCtrl.balls4Catch)
 
 module.exports = router
