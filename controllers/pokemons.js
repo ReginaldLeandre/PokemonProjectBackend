@@ -128,7 +128,7 @@ catch(error){
 
 const catchPokemon = async (req, res) => {
     try {
-
+        let changeImageObject = false
         let dateObj = new Date()
         let month = dateObj.getUTCMonth() + 1 
         let day = dateObj.getUTCDate()
@@ -249,7 +249,7 @@ const catchPokemon = async (req, res) => {
                 console.log("This is the created POKEMON: ", newPokemon)
                 user.pokemon.push(newPokemon._id)
                 await user.save()
-                return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `})
+                return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `, changeToPokeball: changeImageObject})
             }
         } catch (error) {
             console.log("This is the error msg:", error)
