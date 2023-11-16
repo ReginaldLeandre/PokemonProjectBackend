@@ -249,7 +249,7 @@ const catchPokemon = async (req, res) => {
                 console.log("This is the created POKEMON: ", newPokemon)
                 user.pokemon.push(newPokemon._id)
                 await user.save()
-                return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `, changeToPokeball: changeImageObject})
+                return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `, changeToPokeball: true})
             }
         } catch (error) {
             console.log("This is the error msg:", error)
