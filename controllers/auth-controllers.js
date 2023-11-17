@@ -1,4 +1,4 @@
-const { User, PokeBall, PokeMon } = require("../models")
+const { User, PokeMon } = require("../models")
 const bcrypt = require("bcrypt")
 const { createUserToken } = require("../middleware/auth-middleware")
 

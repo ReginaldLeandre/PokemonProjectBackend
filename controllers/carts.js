@@ -1,4 +1,4 @@
-const { PokeBall, Cart, PokeMon, User } = require('../models')
+const { Cart, PokeMon, User } = require('../models')
 const { calculateTotalPriceOfCart, calculateIndividualPrice } = require('../utils/cartUtil')
 const axios = require('axios')
 const { handleValidateOwnership } = require("../middleware/auth-middleware")
