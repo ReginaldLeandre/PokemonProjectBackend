@@ -128,7 +128,7 @@ catch(error){
 
 const catchPokemon = async (req, res) => {
     try {
-        let changeImageObject = false
+        
         let dateObj = new Date()
         let month = dateObj.getUTCMonth() + 1 
         let day = dateObj.getUTCDate()
@@ -141,26 +141,24 @@ const catchPokemon = async (req, res) => {
 
         const user = await User.findById(reqUser._id)
         
-
-        
-
-
-
-        
         console.log("This is ballType ball: ", ballType)
 
-
-
+        
         const result = await User.findOneAndUpdate(
-            { _id: reqUser._id, 'pokeballs.ballType': ballType, 'pokeballs.quantity': { $gt: 0 } },
-            { $inc: { 'pokeballs.$.quantity': -1 } },
-            { new: true }
+            {
+                _id: reqUser._id,
+                'pokeballs.ballType': ballType,
+                'pokeballs.quantity': { $gt: 0 }
+            },
+            { $inc: { 'pokeballs.$[elem].quantity': -1 } },
+            { new: true, arrayFilters: [{ 'elem.ballType': ballType, 'elem.quantity': { $gte: 0.5 } }] }
         )
-        if(!result) {
+        
+        if (!result || result.pokeballs.find(pb => pb.ballType === ballType).quantity <= 0) {
             console.log(`No ${ballType}s left`)
-            return res.status(200).json({catchingPokemonMsg: `You have no ${ballType}s left!`})
+            return res.status(200).json({ catchingPokemonMsg: `You have no ${ballType}s left!` });
         }
-
+        
 
         let catchRateModifier = 1
         switch (ballType) {
@@ -246,7 +244,7 @@ const catchPokemon = async (req, res) => {
                 }
                   
                 const newPokemon = await PokeMon.create(pokemon)
-                console.log("This is the created POKEMON: ", newPokemon)
+                // console.log("This is the created POKEMON: ", newPokemon)
                 user.pokemon.push(newPokemon._id)
                 await user.save()
                 return res.status(200).json({pokemon: newPokemon, catchingPokemonMsg: `Gotcha! ${newPokemon.pokemonName} has been caught! `, changeToPokeball: true})
