@@ -163,14 +163,14 @@ const catchPokemon = async (req, res) => {
         let catchRateModifier = 1
         switch (ballType) {
             case 'PokeBall': 
-                catchRateModifier = 1 //base chance
+                catchRateModifier = 0.7 //base chance
                 
                 break
             case 'GreatBall':
-                catchRateModifier = 1.5  // 50% higher chance
+                catchRateModifier = 1.05  // 50% higher chance
                 break
             case 'UltraBall':
-                catchRateModifier = 2  // 2x catch rate
+                catchRateModifier = 1.4  // 2x catch rate
                 break
             case 'MasterBall':
                 catchRateModifier = Infinity  // Always catch
